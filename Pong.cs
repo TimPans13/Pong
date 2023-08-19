@@ -24,7 +24,61 @@ namespace Pong
     }
 
 
+  public class Ball
+    {
+        public int X { get; set; }//координаты мяча
+        public int Y { get; set; }
+        public int xAngle { get; set; }//смещение в каждой из плоскостей за один кадр 
+        public int yAngle { get; set; }
+        public Ball()
+        {
+            Random rnd = new Random();
+            X += rnd.Next(30, 40);
+            Y += rnd.Next(9, 16);
+            xAngle = 1;
+            yAngle = 1;
+        }
+        public Ball(int w, int h)
+        {
+            Random rnd = new Random();
+            X += rnd.Next(w / 2 - 5, w / 2 + 5);
+            Y += rnd.Next(h / 2 - 3, h / 2 - +3);
+            xAngle = 1;
+            yAngle = 1;
+        }
 
+        public void Write()
+        {
+            Console.SetCursorPosition(X, Y);
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.Write("*");
+        }
+        public void Move(Racket r1, Racket r2)//логика раброты мяча тут
+        {
+            Console.SetCursorPosition(X, Y);
+            Console.Write("\0");//стираем предыдущую позицию
+
+            X += xAngle;
+            Y += yAngle;//перемещаем мяч
+
+            if (Y < 2 || Y > 22)//проверка на удар об горизонтальную стену
+            {
+                yAngle *= -1;//меняем направление мяча
+            }
+
+            if (X < 3 || X > 67)//проверка на удар об вертикальную стену
+            {
+                xAngle *= -1;//меняем направление мяча
+            }
+            //проверка на удар по ракетке
+            if (((X == 4) && ((Y >= (r1.Y - (r1.HalfRacket))) && (Y <= (r1.Y + (r1.HalfRacket))))) || ((X == 66) && ((Y >= (r2.Y - (r2.HalfRacket))) && (Y <= (r2.Y + (r2.HalfRacket))))))
+            {
+                if (Y == r1.Y || Y == r2.Y) { xAngle *= -2; }
+                else { xAngle *= -1; yAngle *= -1; }
+            }
+            Write();//отрисовываем мяч по новым координатам
+        }
+    }
 
    public class Racket
     {
