@@ -23,6 +23,94 @@ namespace Pong
         }
     }
 
+
+
+
+   public class Racket
+    {
+        public int X { get; set; }//координаты ракетки
+        public int Y { get; set; }
+        public int racketHeight { get; set; }//высота всей ракетки
+
+        public int HalfRacket { get; set; }//высота половины ракетки
+
+        public Racket()
+        {
+            X = 66;
+            Y = 12;
+            racketHeight = 25 / 4;
+            HalfRacket = racketHeight / 2;
+        }
+
+        public Racket(int x, int Height)
+        {
+            X = x;
+            Y = Height / 2;
+            racketHeight = Height / 4;
+            HalfRacket = racketHeight / 2;
+        }
+
+        public void Write() //отрисовка ракетки
+        {
+            for (int i = Y - (HalfRacket); i < Y + (HalfRacket); i++)
+            {
+                Console.SetCursorPosition(X, i);
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.Write("|");
+            }
+        }
+
+
+        public void Up()//ракетка перемещается вверх
+        {
+            if (Y - 1 - HalfRacket > 0)
+            {
+                Console.SetCursorPosition(X, Y - 1 + HalfRacket);
+                Console.Write("\0");//стираем предыдущую позицию
+                Y--;
+                Write();//отрисовываем текующую
+            }
+        }
+
+        public void Down()//ракетка перемещается вниз
+        {
+            if (Y + 1 + HalfRacket < racketHeight * 4 + 1)
+            {
+                Console.SetCursorPosition(X, Y - HalfRacket);
+                Console.Write("\0");//стираем предыдущую позицию
+                Y++;
+                Write();
+            }
+        }
+    }
+
+    public class BotRacket : Racket//ракетка управляемая компьютером
+    {
+        public BotRacket()
+        {
+            X = 66;
+            Y = 12 / 2;
+            racketHeight = 12 / 4;
+            HalfRacket = racketHeight / 2;
+        }
+        public BotRacket(int x, int Height)
+        {
+            X = x;
+            Y = Height / 2;
+            racketHeight = Height / 4;
+            HalfRacket = racketHeight / 2;
+
+        }
+        public void BotMove(Ball ball)//логика работы бота
+        {
+            if (ball.X > 35)
+            {
+                if (ball.Y > Y) { Down(); }
+                if (ball.Y < Y) { Up(); }
+            }
+        }
+    }
+  
         public class Board
     {
         public int width { set; get; }
