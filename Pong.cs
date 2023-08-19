@@ -7,24 +7,123 @@ namespace Pong
     {
         int width;
         int height;
+        int racketXPosition;
 
         Board board;
+        Racket player;
+        BotRacket CPU;
+        Ball ball;
+        Score score;
+
+        ConsoleKeyInfo keyInfo;
+        ConsoleKey consoleKey;
 
         public int Width { get => width; set => width = value; }
         public int Height { get => height; set => height = value; }
+        public int RacketXPosition { get => racketXPosition; set => racketXPosition = value; }
         public Board Board { get => board; set => board = value; }
+        public Racket Player { get => player; set => player = value; }
+        public BotRacket CPU1 { get => CPU; set => CPU = value; }
+        public Ball Ball { get => ball; set => ball = value; }
+        public Score Score { get => score; set => score = value; }
+        public ConsoleKeyInfo KeyInfo { get => keyInfo; set => keyInfo = value; }
+        public ConsoleKey ConsoleKey { get => consoleKey; set => consoleKey = value; }
 
         public Pong()//конструктор по умолчанию
         {
             Width = 70;//x    (дефолт:70)
             Height = 25;//y   (дефолт:25)
-            
+            RacketXPosition = 4;//(дефолт:4)
             Board = new Board(Height, Width);
+            Ball = new Ball(Width, Height);
+            Score = new Score();
+        }
+
+        public void Input() //управление равекткой с клавиатуры
+        {
+            if (Console.KeyAvailable)
+            {
+                KeyInfo = Console.ReadKey(true);
+                ConsoleKey = KeyInfo.Key;
+            }
+            switch (ConsoleKey)
+            {
+                case ConsoleKey.W:
+                    Player.Up();
+                    break;
+
+
+                case ConsoleKey.UpArrow:
+                    Player.Up();
+                    break;
+
+                case ConsoleKey.S:
+                    Player.Down();
+                    break;
+
+                case ConsoleKey.DownArrow:
+                    Player.Down();
+                    break;
+
+            }
+            ConsoleKey = ConsoleKey.Spacebar;//на случай если кому то хочется статичную ракетку по умолчанию
+        }
+
+        public void Setup()//задание начальных параметров для игры
+        {
+            Player = new Racket(RacketXPosition, Height);//дефолт (x=4)
+            
+            CPU1 = new BotRacket(Width - RacketXPosition, Height);//дефолт (x=Width - 4)
+            KeyInfo = new ConsoleKeyInfo();
+            ConsoleKey = new ConsoleKey();
+
+            Console.Clear();
+
+            Board.Write();
+            Player.Write();
+            CPU1.Write();
+            Ball = new Ball();
+            Ball.Write();
+            Score.PrintScore();
+
+        }
+
+        public void Run()//процесс игры
+        {
+            while (true)
+            {
+                Setup();
+                while (Ball.X >= RacketXPosition && Ball.X <= Width - RacketXPosition)///3 и 67 нраницы(стоит создать поля под них???)
+                {
+                    Input();
+                    Ball.Move(Player, CPU1);
+                    CPU1.BotMove(Ball);
+                    Thread.Sleep(50);
+                }
+                if (Ball.X < RacketXPosition) Score.player2++;
+                if (Ball.X > Width - RacketXPosition) Score.player1++;
+            }
         }
     }
 
+    public class Score
+    {
+        public int player1 { get; set; }// счёт для каждого игрока
+        public int player2 { get; set; }
+        public Score()
+        {
+            player1 = 0;
+            player2 = 0;
+        }
+        public void PrintScore()//вывод счёта
+        {
+            Console.SetCursorPosition(0, 26);
+            Console.WriteLine("first player : second player");
+            Console.WriteLine(player1 + "            : " + player2);
+        }
+    }
 
-  public class Ball
+    public class Ball
     {
         public int X { get; set; }//координаты мяча
         public int Y { get; set; }
@@ -80,7 +179,7 @@ namespace Pong
         }
     }
 
-   public class Racket
+    public class Racket
     {
         public int X { get; set; }//координаты ракетки
         public int Y { get; set; }
@@ -164,8 +263,8 @@ namespace Pong
             }
         }
     }
-  
-        public class Board
+
+    public class Board
     {
         public int width { set; get; }
         public int height { set; get; }
@@ -214,4 +313,3 @@ namespace Pong
     }
 
 }
-
