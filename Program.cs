@@ -6,6 +6,11 @@ namespace Pong
     {
         static void Main(string[] args)
         {
-            
+            Pong pong = new Pong();
+            pong.Run();
+            Console.ReadKey();
+            Console.CursorVisible = false;
         }
     }
+}
+
